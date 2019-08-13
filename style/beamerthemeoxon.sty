@@ -1,46 +1,20 @@
 \mode<presentation>
 
-%\usetheme{Frankfurt}
 \usepackage{style/beamercolorthemeoxon}
-%\usefonttheme{serif}
 
 
 \beamertemplatenavigationsymbolsempty
 
+\institute{\includegraphics[width=2.7cm]{logo.png}}
 
 
-
-% BEGIN - Macros added by Luke
-% Add slide number at bottom right corner
-% \setbeamertemplate{footline}{%
-% \hfill
-% \color{lighterblue}\insertframenumber{}/\inserttotalframenumber\,}
-% END - Macros added by Luke
-
-% \setbeamertemplate{footline}{%  
-% \begin{beamercolorbox}[wd=\paperwidth,ht=6mm]{footer}%
-%   % \hrule
-%   % \includegraphics[align=c, height=5mm]{../logo2.png}%
-%   % \hspace*{-3cm}
-%   % \hfill{\small\insertshortauthor}
-%   % \setlength{\rest}{7mm}
-%   \hfill
-%   \vbox to7mm{\vfil\hbox{\insertframenumber{}/\inserttotalframenumber\,}\vfil}
-% \end{beamercolorbox}}
-
-
-\setbeamertemplate{footline}{%
- \includegraphics[align=c,height=7mm]{blank.jpeg}%
-  % \hspace*{-3cm}
+\setbeamertemplate{footline}{
+ \includegraphics[align=c,height=7mm]{blank.jpeg}
   \usebeamercolor[bg]{footer}
   \usebeamercolor[fg]{footer}
   \hfill
   \insertframenumber{}/\inserttotalframenumber\,
 }
-
-
-
-%\setbeamercovered{transparent}
 
 \let\os\section
 \renewcommand{\section}[1]{\os{#1}\subsection{}}
