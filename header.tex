@@ -1,11 +1,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage[normalem]{ulem} % \sout{...} - strike out; added by Luke
 \newcommand\defeq{\coloneqq}
-\renewcommand\phi{\varphi}
-\newcommand\set[1]{\{{#1}\}}
-%\usepackage{appendix}
-%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \usepackage[british,UKenglish]{babel}
 \usepackage[T1]{fontenc}
@@ -15,31 +12,7 @@
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{amsthm}
-\usepackage{thmtools,thm-restate}
 \usepackage{tabularx}
-%\usepackage{MnSymbol}
-% \usepackage[ruled,vlined]{algorithm2e}
-%\usepackage{float}
-\usepackage{proof}
-\usepackage{xcolor}
-\definecolor{oxblue}{RGB}{0,33,71}
-\definecolor{oxlightblue}{RGB}{0,72,205}
-\definecolor{oxlightblue2}{RGB}{161,196,208}
-\definecolor{oxgold}{HTML}{a0630a%ac6a0a%b9720b%cc7e0c%e88f0e% 9e8340
-}
-\definecolor{oxyellow}{RGB}{243,222,116}
-\definecolor{oxbrown}{HTML}{88562e}%153,101,21}
-\definecolor{oxgreen}{HTML}{3e6111}%558618}
-\definecolor{oxgreen2}{RGB}{105,145,59}
-\definecolor{oxgreen3}{RGB}{185,207,150}
-
-\definecolor{oxred}{HTML}{ac0b1d}%960a2c}
-\definecolor{oxred2}{RGB}{190,15,52}
-\definecolor{oxpink}{RGB}{235,196,203}
-\definecolor{oxorange}{RGB}{207,122,48}
-
-\definecolor{oxgrey}{RGB}{167,157,150}
-
 
 \usepackage{listings}
 \lstset{language=haskell, keywordstyle={\bfseries\color{oxblue}},morekeywords={rec}}
@@ -53,3 +26,69 @@
 
 
 \DeclareMathOperator{\dom}{dom}
+
+
+\usepackage{graphbox}
+\usepackage{mdframed}
+
+\usepackage{style/beamerthemeoxon}
+
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, shapes.arrows,matrix,fit,patterns}
+\usepackage{tabularx}
+\usepackage{pifont}
+
+\newcommand{\cmark}{\color{oxgreen}\ding{51}}%
+\newcommand{\xmark}{\color{oxdarkerred}\ding{55}}
+
+\usepackage{multirow}
+\usepackage{tikz-cd}
+
+\newcommand{\subheadline}[1]{\bigskip\textbf{\large\color{oxlighterblue}#1}}
+
+\newcounter{partc}
+
+\newcommand{\partframe}[1]{
+  \begin{frame}[plain]
+    \begin{columns}
+      \begin{column}{\paperwidth}
+        \begin{mdframed}[backgroundcolor=oxlighterblue,fontcolor=white,
+          userdefinedwidth=\paperwidth,
+          innertopmargin=10pt,innerbottommargin=10pt,
+          innerleftmargin=2pt,innerrightmargin=2pt]
+
+          \centering
+          \stepcounter{partc}
+          \Huge Part \Roman{partc}:
+
+          \textbf{#1}
+        \end{mdframed} 
+      \end{column}
+    \end{columns}
+  \end{frame}
+}
+
+\tikzstyle{arr}=[->,color=oxlighterblue]
+\tikzstyle{ann}=[text=oxlighterblue,anchor=base]
+\tikzstyle{box}=[fill=oxlightblue,draw=oxblue,inner sep=5pt,very
+      thick,anchor=base]
+\tikzstyle{greybox}=[fill=black!5,draw=black!75,inner sep=5pt,very
+      thick,anchor=base]
+      \tikzstyle{e}=[anchor=base]
+      \tikzstyle{frame}=[fill=oxpink,anchor=base,very
+  thick,dashed,ellipse,inner sep=1pt]
+  \tikzstyle{highlight}=[fill=oxpink,draw=oxred,anchor=base,very
+  thick,inner sep=5pt]
+  \tikzstyle{harr}=[->,color=oxred]
+
+  
+
+\tikzset{
+    invisible/.style={opacity=0},
+    visible on/.style={alt={#1{}{invisible}}},
+    alt/.code args={<#1>#2#3}{%
+      \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}%
+  }
+}
+
+\newtheorem{proposition}[theorem]{Proposition}

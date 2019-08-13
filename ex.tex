@@ -1,7 +1,5 @@
 \documentclass{beamer}
 
-\newif\ifdraft
-
 \include{header}
 \include{headerbeamer}
 
@@ -27,7 +25,7 @@
     node [pos=0.5,anchor=north,yshift=0.15cm] {\Large\emph{1st-order}};
   }
     
-  \textit{\LARGE\color{lighterblue}
+  \textit{\LARGE\color{oxlighterblue}
     ``Constrained Horn Clauses provide a \emph{suitable} basis for automatic program verification''
   }
 
@@ -51,7 +49,7 @@
   {[Cathcart Burn, Ong \& Ramsay; POPL'18]:
 
     {\large
-    \textbf{\textit{\color{lighterblue}extend approach to \emph{higher-orders}}}}
+    \textbf{\textit{\color{oxlighterblue}extend approach to \emph{higher-orders}}}}
   }
 
 \end{frame}
@@ -104,10 +102,8 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
 \begin{frame}
   
   {\LARGE
-    %\color{foo}
-    \color{lighterblue}
-    \textit{Is higher-order (Horn) logic modulo theories a sensible
-    \emph{algorithmic} approach to verification?}
+    \color{oxlighterblue}
+    \textit{Is higher-order (Horn) logic modulo theories a sensible \emph{algorithmic} approach to verification?}
   
 }
   
@@ -116,10 +112,10 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
 \begin{frame}
 
   \tikzstyle{every picture}+=[remember picture]
-  \tikzstyle{strthr}=[thick,draw=oxred2,cross
+  \tikzstyle{strthr}=[thick,draw=oxred,cross
     out,anchor=base,inner sep=2pt]
   \tikzstyle{fail}=[ellipse,inner
-    sep=0pt,pattern=crosshatch,pattern color=oxred,anchor=base]
+    sep=0pt,pattern=crosshatch,pattern color=oxdarkerred,anchor=base]
   
     {
     \bfseries\color{oxblue}
@@ -207,7 +203,7 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
   \tikzstyle{bg}=[fill=oxgold!25,anchor=base,inner sep=2pt,very
     thick,dashed]
 
-    \tikzstyle{hol}=[fill=oxgreen3,anchor=base,inner sep=2pt]
+    \tikzstyle{hol}=[fill=oxlightergreen,anchor=base,inner sep=2pt]
 
     \tikzstyle{disvars}=[fill=oxpink,anchor=base,inner sep=2pt]
 
@@ -220,7 +216,7 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
       {$\Sigma'$};}$
     \hfill
     \tikz\node[ann] (disvars1)
-      {\emph{distinct} \color{lighterblue}variables}; \hspace*{8mm}
+      {\emph{distinct} \color{oxlighterblue}variables}; \hspace*{8mm}
 
     \hspace{-0.5cm}\tikz[baseline]\node[ann,bg] (sigsann1){background theory};
     \hspace{0.2cm}\tikz[baseline]\node[ann] (sigsann2)  {relational extension}; 
@@ -252,7 +248,7 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
   \item only \emph{relational} higher-order types 
   \item positive literals are \emph{definitional}
   \item no logical symbols in atoms: \tikz[baseline]{
-      \node[thick,draw=oxred2,cross out,anchor=base,inner sep=0pt]
+      \node[thick,draw=oxred,cross out,anchor=base,inner sep=0pt]
       {$R\,\neg$};}
   \item in paper: + $\lambda$-abstractions
   \end{itemize}
@@ -344,7 +340,7 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
       \node [above right=13mm and -15mm of anncann] (foo) {};
 
 
-      \path[->,arr] (anncann.north) edge[bend right=20] (foo);
+      \path[arr] (anncann.north) edge[bend right=20] (foo);
     \end{tikzpicture}
     
 \end{frame}
@@ -470,7 +466,7 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
   
   \begin{columns}
     \begin{column}{0.8\paperwidth}
-      \textit{\textbf{\Large\color{lighterblue} 
+      \textit{\textbf{\Large\color{oxlighterblue} 
     HoCHC lies at a \textbf{``sweet
       spot''} in higher-order logic, \emph{semantically robust} and
     \emph{useful} for \emph{algorithmic} verification.}}
