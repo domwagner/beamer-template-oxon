@@ -1,0 +1,1326 @@
+\documentclass{beamer}
+
+\newif\ifdraft
+
+\include{header}
+\include{headerbeamer}
+
+
+\begin{document}
+
+\title[HoCHC]{
+  \textbf{HoCHC: A Refutationally Complete and\\
+    Semantically Invariant System of\\
+    Higher-order Logic Modulo Theories}
+}
+\author[L.~Ong, \textbf{\underline{D.~Wagner}}]{Luke Ong\and
+  \textbf{ \underline{Dominik Wagner}}}
+\institute{\includegraphics[width=2.7cm]{logo2.png}}
+\date[LICS 2019]{LICS 2019% \\\vspace{0.2cm}24th
+  % June 2019
+}
+
+\frame{\titlepage}
+
+\section{Introduction}
+
+\begin{frame}
+  % \frametitle{Motivation}
+  \onslide<3->{
+    \hspace{-0.8cm}\tikz{
+      \draw [thick, decoration={brace, mirror,raise=0.5cm,
+        amplitude=8pt}, decorate] (0,0) -- (2,0) 
+      node [pos=0.5,anchor=north,yshift=0.15cm] {\Large\emph{1st-order}};
+    }
+  }
+  
+  \textit{\LARGE\color{lighterblue}
+    ``Constrained Horn Clauses provide a \alert<2->{suitable} basis for automatic program verification''
+  }
+
+  \onslide<3->{
+    \hspace{3.4cm}\tikz[baseline]{
+      \draw [thick, decoration={brace,raise=0.5cm,
+        amplitude=8pt}, decorate] (0,-0.5) -- (2,-0.5) 
+      node [pos=0.5,anchor=north,yshift=0.6cm] {\Large\emph{imperative}};
+    }}\hfill [Bj{\o}rner et al., 2015]
+
+  \onslide<2->{
+    \setbeamertemplate{itemize item}[triangle]
+    \setbeamercolor{itemize item}{fg=oxblue}
+    \vspace{1cm}
+    {
+      \begin{itemize}
+      \item separation of concerns
+      \item good \emph{algorithmic} properties: semi-decidable, highly efficient solvers
+      \end{itemize}
+    }
+  }
+
+  \vspace{0.5cm}
+  \onslide<4->{{[Cathcart Burn, Ong \& Ramsay; POPL'18]:}
+
+    {\large
+    \textbf{\textit{\color{lighterblue}extend approach to \emph{higher-orders}}}}
+  }
+
+\end{frame}
+
+% \begin{frame}
+  
+%   {\Large
+%     \cite{BOR18}: \color{lighterblue}extend approach to higher-orders
+%   }
+
+% \end{frame}
+
+\begin{frame}[fragile]
+
+  \vspace*{3mm}
+  {\large 
+    \only<2->{\lstset{emph={f},emphstyle={\color{oxred2}}}}
+    \begin{lstlisting}[escapeinside={(*}{*)}]
+let add   x y = x + y(*\pause*)
+let twice f x = f (f x)(*\pause*)
+in  (*$\lambda$*)x. assert (x >= 1 ->
+                    (twice (add x) 0) > x)
+\end{lstlisting}
+}
+\pause
+  \vspace{0.5cm}
+
+  \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+  \newcolumntype{L}{>{\raggedright\arraybackslash}X}
+  \renewcommand\tabularxcolumn[1]{m{#1}}
+  \begin{tabularx}{\textwidth}{ RcL }
+    \begin{tikzpicture}
+      \coordinate (b) at (0,0);
+      \coordinate (a) at (0,1);
+      \draw[->, >=latex, oxblue, line width=5pt]   (a) to node[white]{} (b) ;
+    \end{tikzpicture} &
+    (over-)approximate graph of functions
+    &\begin{tikzpicture}
+      \coordinate (b) at (0,0);
+      \coordinate (a) at (0,1);
+      \draw[->, >=latex, oxblue, line width=5pt]   (a) to node[white]{} (b) ;
+    \end{tikzpicture}
+  \end{tabularx}
+  \pause
+
+  \Large
+  \vspace{-0.2cm}
+    \[
+      \begin{array}{l}
+        {\scriptstyle\forall x, y, z\ldotp\big(}z = x + y \to \Add\,  x \, y \, z {\scriptstyle\big)} \pause\\[4pt]
+        {\scriptstyle\forall f, x,z\ldotp \big(} \exists y\ldotp
+        (f \, x \, y)\land (f\,y\,z) \to \Twice \, f \, x\,z {\scriptstyle\big)} \pause\\[4pt]
+        \onslide<5->{{\scriptstyle\forall x,z\ldotp \big (} x \geq 1 \wedge \Twice \, (\Add\,x) \, 0\,z\; \to \; z > x {\scriptstyle\big)}}
+      \end{array}
+    \]
+    
+\end{frame}
+
+
+% \begin{frame}
+
+%   \tikzstyle{every picture}+=[remember picture]
+
+%   \vspace*{5mm}
+%   \begin{center}
+%     \begin{tikzpicture}
+%       \node [text=lighterblue] (HoCHC) {\LARGE\textbf{HoCHC for verification}};
+%       \onslide<2->{\node [box,align=center,text width=3.5cm,below
+%         right=7mm and -24mm of HoCHC] (TA) {\large (A)TA higher-order model checking};}
+%       \node [box,align=center,text width=2.7cm,below left=7mm and -24mm of HoCHC] (dir) {\large direct encoding of safety};
+      
+%       \onslide<3->{\node [below=3mm of TA] (TAexp) {\emph{$\mathcal
+%             L(\mathcal A)\ni \llbracket\mathcal G\rrbracket$}};}
+      
+%       \path<2->[<-, >=latex, color=lighterblue, line width=4pt] (HoCHC) edge (TA);
+%       \path[<-, >=latex, color=lighterblue, line width=4pt] (HoCHC) edge (dir);
+%     \end{tikzpicture}
+%   \end{center}
+
+%   \vspace*{5mm}
+%   \hspace*{2cm}
+%   \onslide<2-3>{\tikz[baseline]{\node [ann,text width=2.6cm] (TAann) {(alternating)\\trivial automata};}}
+%   \hspace*{1cm}
+%   \tikz[baseline]{\node<3-> [ann,text width=2.8cm]
+%     (HoRSann) {higher-order\\recursion scheme};}
+%   \vspace*{-1mm}
+%   \onslide<3->{
+%     \hfill
+%     \color{oxbrown!60!black}
+%   \begin{figure}
+%     \begin{minipage}{0.1\textwidth}
+%       \hfill
+%     \end{minipage}
+%     \begin{minipage}{0.3\textwidth}
+%       \tikz[baseline]{\node[anchor=base] (HoRS1) {$\mathcal G$};}defined by
+%       {\small
+%         \begin{align*}
+%           S&=F\,b\,c\\
+%           F\,f\,x&=a\,(f\,x)\,(F\,f\,(f\,x))  
+%         \end{align*}
+%       }
+%     \end{minipage}
+%     \begin{minipage}{0.2\textwidth}
+%       \hfill$\llbracket\mathcal G\rrbracket=$
+%     \end{minipage}
+%     \begin{minipage}{0.3\textwidth}
+%       \begin{tikzpicture}[node distance=8mm,scale=0.9, every node/.style={scale=0.9}]
+%         \tikzstyle{state}=[text=oxred]
+        
+%         \node (r) {a};
+%         \onslide<-3>{\node [state,above right=-10pt of r] {$q_0$};}
+%         \node [below left of=r] (b1) {b};
+%         \onslide<-3>{\node [state,above left=-10pt of b1] {$q_0$};}
+%         \node [below of=b1] (c1) {c};
+%         \onslide<-3>{\node [state,above left=-10pt of c1] {$q_1$};}
+%         \node [right=1.1cm of b1] (a) {a};
+%         \onslide<-3>{\node [state,above right=-10pt of a] {$q_0$};}
+%         \node [below left of=a] (b2) {b};
+%         \onslide<-3>{\node [state,above left=-10pt of b2] {$q_0$};}
+%         \node [below right of=a] (dots) {\vdots};
+%         \node [below of=b2] (b3) {b};
+%         \onslide<-3>{\node [state,above left=-10pt of b3] {{\Large $\lightning$}$q_1$};}
+%         \node [below of=b3] (c2) {c};
+
+%         \path (r) edge  (b1)
+%         edge (a)
+%         (b1) edge (c1)
+%         (a) edge (b2)
+%         edge (dots)
+%         (b2) edge (b3)
+%         (b3) edge (c2);
+%       \end{tikzpicture}
+%     \end{minipage}
+%   \end{figure}
+%   }
+
+%   \begin{tikzpicture}[overlay]
+%     \path<2-3>[->,arr] (TAann) edge [bend left=20] ($ (TA.south west) + (0.3,0.5) $);
+%     \path<3>[->,arr] ($ (TAann.east) - (0.5,0) $) edge [bend right] ($ (TAexp.south west) + (0.7,0) $)
+%      (HoRSann.north) edge [bend right] ($ (TAexp.south west) + (1.7,0) $);
+%   \end{tikzpicture}  
+% \end{frame}
+
+\begin{frame}
+  
+  {\LARGE
+    %\color{foo}
+    \color{lighterblue}
+    \textit{Is higher-order (Horn) logic modulo theories a sensible
+    \emph{algorithmic} approach to verification?}
+  
+  % \vspace{0.5cm}\pause
+  
+  % \textit{\textbf{Is it well-founded?}}
+}
+  
+\end{frame}
+
+\begin{frame}
+
+  \tikzstyle{every picture}+=[remember picture]
+  \only<5->{\tikzstyle{strthr}=[thick,draw=oxred2,cross
+    out,anchor=base,inner sep=2pt]}
+  \only<-4>{\tikzstyle{strthr}=[anchor=base,inner sep=2pt]}
+  \only<5->{\tikzstyle{fail}=[ellipse,inner
+    sep=0pt,pattern=crosshatch,pattern color=oxred,anchor=base]}
+  \only<-4>{\tikzstyle{fail}=[anchor=base, inner sep=0pt]}
+
+  
+  % \onslide<3->{\hspace*{82mm}\tikz{\node[ann,text width=3cm] (folc) {\textit{$\cong$ FoL + comprehension axioms}}}}
+  {
+    \bfseries\color{oxblue}
+    \begin{table}
+      \centering
+      \hspace*{-6mm}
+      \renewcommand\arraystretch{1.5}
+      \begin{tabular}{l|cccc}
+        &\multirow{2}{*}{1st-order logic}
+        \onslide<2->{&
+                    \multicolumn{2}{c}{
+                    \tikz[baseline]{
+                    \node[strthr] (hol)
+                    {higher-order logic};}}
+        \\\cline{3-4}}
+        &&\onslide<2->{\tikz[baseline]{\node[anchor=base ,inner sep=0pt]
+           (std){standard};}}
+                     & \onslide<3->{
+                       \tikz[baseline]{
+                           \node[anchor=base,inner sep=0pt] (Henkin) {Henkin};
+                       }
+                       % \tikz[overlay]{
+                       % \path[->] ($ (folc.south east) + (-0.3,0.3) $)
+                       % edge [bend left] (Henkin.north east) ;
+                       % }
+                       }
+        \\\hline
+        complete proof systems&\cmark&
+                                       \tikz[baseline]{
+                                       \node<2->[fail] (proof)
+                                       {\xmark};}&\onslide<3->{\cmark}\\
+        semi-decidable&\cmark&
+                               \tikz[baseline]{
+                                       \node<2->[fail] (semi)
+                                       {\xmark};}&\onslide<3->{\cmark}\\\pause\pause
+        1st-order translation&--&
+                                       \tikz[baseline]{
+                                       \node[fail] (fol)
+                                       {\xmark};}&\cmark\\\pause
+        intuitive &\cmark&\cmark&\xmark
+      \end{tabular}
+    \end{table}
+
+    \begin{tikzpicture}[overlay]
+      \only<5->{
+        \node[anchor=base,above=0cm of hol]
+        {\emph{\Large\textbf{HoCHC}}};
+        \node[anchor=base,right=-0.1cm of proof]
+        {\cmark};
+        \node[anchor=base,right=-0.1cm of semi]
+        {\cmark};
+        \node[anchor=base,right=-0.1cm of fol]
+        {\cmark};
+      }
+      \only<6->{\node[anchor=base,right=-0.4mm of std]
+        {\emph{$\Leftrightarrow$}};}
+    \end{tikzpicture}
+    
+  }
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Contributions}
+  \begin{itemize}
+  \item A \emph{simple} resolution proof system for HoCHC
+    \begin{itemize}
+    \item Completeness even for \emph{standard} semantics
+    \item HoCHC is \emph{semi-decidable} and compact
+    \end{itemize}
+  \item Semantic invariance\pause
+  \item Canonical model property
+  \item 1-st order translation (complete for \emph{standard}
+    semantics)
+  \item \emph{Decidable} fragments
+  \end{itemize}
+
+  \pause
+  \subheadline{This talk:}
+  \begin{itemize}
+  \item Canonical model property 
+  \item Resolution proof system and its completeness
+  \item Semantic invariance
+  \end{itemize}
+\end{frame}
+
+\section{HoCHC}
+\partframe{HoCHC}
+
+\begin{frame}
+  \frametitle{Syntactic Features}
+  \tikzstyle{every picture}+=[remember picture]
+
+  \only<2>{\tikzstyle{bg}=[fill=oxgold!25,anchor=base,inner sep=2pt,very
+    thick,dashed]}
+  \only<1,3->{\tikzstyle{bg}=[anchor=base,inner sep=2pt,very
+    thick,dashed]}
+
+  \only<3>{\tikzstyle{hol}=[fill=oxgreen3,anchor=base,inner sep=2pt]}
+  \only<1,2,4->{\tikzstyle{hol}=[anchor=base,inner sep=2pt]}
+
+  \only<5->{\tikzstyle{disvars}=[fill=oxpink,anchor=base,inner sep=2pt]}
+  \only<1-4>{\tikzstyle{disvars}=[fill=white,anchor=base,inner sep=2pt]}
+
+
+  \vspace{-0.1cm}
+  signatures $\tikz[baseline]{
+      \node[anchor=base] (sigs1)
+      {$\Sigma$};}\subseteq \tikz[baseline]{
+      \node[anchor=base] (sigs2)
+      {$\Sigma'$};}$
+    \hfill
+    \onslide<5->{\tikz\node[ann] (disvars1)
+      {\emph{distinct} \color{lighterblue}variables}; \hspace*{8mm}}
+
+  \onslide<2-3>{
+    \hspace{-0.5cm}\tikz[baseline]\node[ann,bg] (sigsann1){background theory};
+    \hspace{0.2cm}\tikz[baseline]\node[ann] (sigsann2)  {relational extension}; 
+  }
+  \onslide<4>{\hfill\tikz[baseline]\node[ann] (def)  {definite clauses}; \hspace*{8mm}} 
+
+  \vspace*{-0.4cm}
+  
+
+    
+  \begin{minipage}{.6\textwidth}
+    \begin{align*}
+      \tikz[baseline]{\node[bg]{$\neg (z=x+y)$};}
+      \lor \Add\tikz[baseline]{
+      \node[disvars] (disvars2)
+      {$x\,y\,z$};}\\
+      \tikz[baseline]{\node[hol] (hoh)
+      {$\neg(f\,x\,y)$};} \lor
+      \tikz[baseline]{\node[hol] (hoh)
+      {$\neg(f\,y\,z)$};} \lor
+      \Twice\tikz[baseline]{
+      \node[disvars] (disvars4)
+      {$f\,x\,z$};} \\
+      \tikz[baseline]{\node[bg]{$\neg (x\geq 1)$};}
+      \lor\neg\Twice\,(\Add\,x)\,0\,z\lor
+      \tikz[baseline]{\node[bg] (goal2) {$\neg (z\leq x)$};}
+    \end{align*}
+  \end{minipage}%
+  \begin{minipage}{0.4\textwidth}
+  \end{minipage}
+  
+  \onslide<4>{\hfill\tikz[baseline]\node[ann] (goal)  {goal clause};\hspace*{8mm}}
+  \begin{itemize}
+  \item<3-> only \emph{relational} higher-order types 
+  \item<5-> positive literals are \emph{definitional}
+  \item<6-> no logical symbols in atoms: \tikz[baseline]{
+      \node[thick,draw=oxred2,cross out,anchor=base,inner sep=0pt]
+      {$R\,\neg$};}
+  \item<6-> in paper: + $\lambda$-abstractions
+  \end{itemize}
+
+  
+
+  \begin{tikzpicture}[overlay]
+    \path[arr]<2-3> (sigsann1) edge [bend left=20] (sigs1.south west)
+    (sigsann2.north) edge [bend right] (sigs2);
+    \path[arr]<4> (def.south) edge [bend left=30] (disvars2.east)
+    edge [bend left=40] (disvars4.east)
+    (goal.north) edge [bend right=20] (goal2.east);
+    \path[arr]<5-> (disvars1.south) edge [bend left] (disvars2)
+    edge [bend left] (disvars4);
+  \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Standard Semantics}
+  \tikzstyle{every picture}+=[remember picture]
+
+  $\As$: fixed model of the background theory
+  \pause
+
+  \vspace{0.5cm}
+  \emph{standard} interpretation $\Sf$ of types: \hfill\tikz[baseline]\node[anchor=base] (sfunc1) {\color{lighterblue}\emph{full} function space}; 
+  %\vspace*{-0.2cm}
+  \begin{align*}
+    \sinti\Sf\iota&\defeq\dom(\As)&\sinti\Sf o&\defeq\bool&\sinti\Sf{\tau\to\sigma}&\defeq
+                                                                           \tikz[baseline]{
+                                                                           \node[anchor=base] (sfunc2) {$[\sinti\Sf\tau\to\sinti\Sf\sigma]$};}
+  \end{align*}
+
+  \begin{tikzpicture}[overlay]
+    \path[arr] (sfunc1.south) edge [bend right] (sfunc2);
+  \end{tikzpicture}
+  \pause
+
+  \vspace{0.5cm}
+  Structures $\Bs$, valuations $\alpha$ and denotations $\sinti\Bs
+  M(\alpha)$ as usual\\
+  \[
+    \begin{array}{l}
+      \text{e.g.}\qquad\sinti\Bs{M_1\,M_2}(\alpha)\defeq\sinti\Bs{M_1}(\alpha)(\sinti\Bs{M_2}(\alpha))
+    \end{array}
+  \]
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{HoCHC Satisfiability Problem}
+  $\As$: fixed model (over $\Sigma$) of the background theory
+
+  $\Set$: set of HoCHCs
+
+  \vspace{3mm}
+  
+  {\large\begin{block}{Satisfiability}
+      $\Set$ is \emph{$\As$-satisfiable} if there exists a $\Sigma'$-structure $\Bs$ s.t.
+      \vspace{3pt}
+      \begin{enumerate}
+        \setlength\itemsep{5pt}
+      \item $\Bs$ agrees with $\As$ on $\Sigma$ (background theory),\pause
+      \item \emph{$\Bs,\alpha\models C$} for each $C\in\Set$ and valuation $\alpha$.
+      \end{enumerate}
+    \end{block}
+  }
+\end{frame}
+
+\section{Canonical Model Property}
+\partframe{Canonical Model Property}
+
+\begin{frame}
+  \frametitle{Immediate Consequence Operator}
+  \tikzstyle{every picture}+=[remember picture]
+
+  \onslide<2->{\subheadline{Idea:} \textit{satisfy what needs to be satisfied}}
+  
+  \vspace*{6mm}
+  \onslide<3->{\hfill \tikz[baseline]\node[ann] (body1) {$\neg A_1\lor\cdots\lor\neg A_n\lor R\,\overline x\in\Set$};}
+  %\vspace*{-1mm}
+  {
+    \large
+    \begin{align*}
+      {\color{oxred2}T_\Set(\Bs)}\onslide<3->{,\alpha\models R\,\overline x
+      \hspace{5mm}&\iff\hspace{5mm}}
+                    \Bs\onslide<3->{,\alpha\not\models
+                    \tikz[baseline]{\node [e,inner sep=0pt] (body2)
+                    {\emph{$\neg A_1\lor\cdots\lor\neg A_n$}};}
+                    \hspace{10mm}
+                    }
+    \end{align*}
+  }\pause\pause
+  \begin{tikzpicture}[overlay]
+    \path[->,arr] (body1.south) edge [bend right] (body2.north); 
+  \end{tikzpicture}
+
+  \pause
+  \vspace*{-4mm}
+  
+  {\color{lighterblue}
+    \Large\begin{align*}
+            \text{prefixed points of }T_\Set = \text{models of \emph{definite} clauses in }\Set
+          \end{align*}
+        }
+
+\end{frame}
+
+\begin{frame}
+
+  \vspace*{1cm}
+  \onslide<2->{\large\color{lighterblue}\textbf{The \emph{least} model property
+      \emph{fails} for standard semantics!}
+  }
+
+  \vspace{5mm}
+  \begin{minipage}{0.5\textwidth}   %left column
+    \subheadline{1st-order:}\\[3mm]
+    {
+      \centering 
+      \begin{tikzcd}[row sep=2.5em,column sep=3.7em,minimum
+        width=2em,nodes={anchor=center}, ampersand
+        replacement=\&]
+        T_\Set \text{ is monotone}
+        \arrow[Rightarrow]{d}{\;\text{Knaster-Tarski}}\\
+        \Set \text{ has \emph{least} model}\&
+      \end{tikzcd}
+    }
+  \end{minipage}
+  % \hfill\vline\hfill
+  \begin{minipage}{0.45\textwidth} %right column
+    \onslide<3->{
+      \subheadline{higher-order:}\\[3mm]
+      {\centering 
+        \begin{tikzcd}[row sep=2.5em,column sep=3.7em,minimum
+          width=2em,nodes={anchor=center}, ampersand
+          replacement=\&]
+          T_\Set \text{ is \emph{quasi-monotone}}
+          \arrow[Rightarrow]{d}{\;\text{\parbox{2cm}{\emph{extension}
+                of\\Knaster-Tarski}}}\\
+          \Set \text{ has \emph{canonical} model}
+        \end{tikzcd}
+      }
+    }
+  \end{minipage}
+\end{frame}
+
+
+  \begin{frame}
+
+    \subheadline{Fix:} $(L,\leq)$ complete lattice,
+    \quad
+    $F\from L\to L$,
+    \quad
+    \onslide<4->{\emph{${\arel}\subseteq L\times L$}}
+
+    \vspace*{1mm}
+    \onslide<2->{
+      \begin{align*}
+        a_0&\defeq\bot\qquad
+             a_1\defeq F(a_0)\qquad
+             a_2\defeq F(a_1)\quad\ldots\quad
+             a_\omega\defeq \biglor_{n\in\omega} a_n\quad\ldots\\
+      a_F&\defeq \biglor_{\beta\in\On}a_\beta
+      \end{align*}
+    }
+    
+    \vspace*{2mm}
+    \onslide<5->{
+      \begin{definition}
+        $F$ is \emph{quasi-monotone} if $a\arel b\implies F(a)\arel F(b)$.
+      \end{definition}
+    }
+    \onslide<3->{
+      \begin{proposition}[``Extended Knaster-Tarski'']
+        \begin{enumerate}
+        \item $F(a_F)\leq a_F$
+          \onslide<6->{
+          \item
+            
+            $
+            % \begin{align*}
+            \left. \begin{array}{rl}
+                     \text{\color{lighterblue}(i)}& F(b)\leq b\\
+                     \text{\color{lighterblue}(ii)}& F \text{
+                                                    is}
+                                                    \tikz[baseline]{\node[e] (qm)
+                                                    {quasi-monotone}}\\
+                     \text{\color{lighterblue}(iii)}& \arel \text{ is
+                                                      \emph{compatible} with } \leq \\
+                   \end{array}\right\} \implies \emphmath{a_F\arel b}
+                 % \end{align*}
+                 $
+               }
+             \end{enumerate}
+           \end{proposition}
+         }
+       \end{frame}
+
+
+  \begin{frame}
+
+    \tikzstyle{every picture}+=[remember picture]
+    \vspace{3mm}
+    \subheadline{Use:} $T_\Set$\onslide<3->{ and \emph{logical relations} ${\arel_\sigma}\subseteq\sinti\Sf\sigma\times\sinti\Sf\sigma$}
+    
+    \vspace*{4mm}
+    \onslide<4->{
+      \begin{lemma}[Fundamental Theorem]
+        \vspace*{-7mm}
+        \begin{align*}
+          \left. \begin{array}{rl}
+                   \Bs\arel\Bs'\\
+                   \alpha\arel\alpha'\\
+                 \end{array}\right\} \implies
+          \sinti\Bs M(\alpha)\arel\sinti{\Bs'}M(\alpha')
+        \end{align*}
+        \vspace*{-4mm}
+      \end{lemma}
+    }
+    \vspace*{4mm}
+    {
+      \setbeamertemplate{itemize item}[triangle]
+      \setbeamercolor{itemize item}{fg=oxblue}
+      \begin{itemize}
+        \setlength\itemsep{1mm}
+      \item<2-> \tikz[baseline]{\node[e] (cann1)
+          {$\As_\Set$};}\hspace*{-1mm}$\models\{D\in\Set\mid D\text{
+          definite}\}$\qquad\qquad\tikz[baseline]{\node[ann]
+          (cann2) {canonical structure};}
+      \item<5-> $T_\Set$ is quasi-monotone
+      \item<5-> $\As_\Set\arel\Bs$ if $\Bs\models\Set$
+      \item<6-> $\As_\Set\models$\hspace*{-2mm} \tikz[baseline]{\node[e] (goal1) {$G$};}\hspace*{-1mm}
+        if $\Bs\models\Set$
+        \qquad\qquad\quad\qquad\tikz[baseline]{\node[ann] (goal) {$G\in\Set$ goal clause};}
+      \end{itemize}
+    }
+    
+
+    \vspace*{4mm}
+    \onslide<7->{
+      \begin{theorem}[Canonical Model Property]
+        $\As_\Set\models\Set$ if $\Set$ is $\As$-satisfiable.
+      \end{theorem}
+    }
+    \onslide<6->{
+      \begin{tikzpicture}[overlay]
+        \path[arr] (goal.west) edge [bend left=20] ($ (goal1) + (0.2,-0.2) $);
+      \end{tikzpicture}
+    }
+    \onslide<2->{
+      \begin{tikzpicture}[overlay]
+        \path[arr] (cann2.west) edge [bend right=20] ($ (cann1) + (0.2,0.2) $);
+      \end{tikzpicture}
+    }
+    
+  \end{frame}
+
+\section{Resolution Proof System}
+\partframe{Resolution Proof System}
+
+\subsection{Proof System}
+\begin{frame}
+  %\frametitle{Proof System}
+
+  \tikzstyle{every picture}+=[remember picture]
+
+  \vspace*{2mm}
+  \begin{block}{Proof System}
+    \inferbintalk{Resolution}{G\lor \color{oxred2}\neg R\,\overline M}{{\color{oxred2}R\,\overline x}\lor G'}{G\lor \big(G'[\overline M/\overline x]\big)}
+    \bigskip
+    \pause
+
+    \onslide<2->{
+      \onslide<3->{\hfill\hfill \tikz\node[ann] (vars) {variables};} \hfill\tikz\node[ann] (bgs) {background atoms};
+
+      \inferuntalk{Constraint\\Refutation}{
+        \onslide<3->{\neg \tikz[baseline]{
+          \node[anchor=base] (var1) {$x_1$};} \overline M_1\lor\cdots\lor
+        \neg \tikz[baseline]{\node[anchor=base] (var2) {$x_m$};}\overline
+        M_m\lor}
+      \color{oxred2}\neg \tikz[baseline]{\node[anchor=base] (bg1) {$\phi_1$};}\lor\cdots\lor\neg \tikz[baseline]{\node[anchor=base] (bg2) {$\phi_n$};}}{\bot}{provided
+      there exists a valuation $\alpha$ s.t.\ \emph{$\As,\alpha\not\models\neg\phi_1\lor\cdots\lor\neg\phi_n$}
+    }
+  }
+  \end{block}
+
+  \begin{tikzpicture}[overlay]
+    % \node<2-> [rotate=-30] at (9.5,4.8) {\color{lighterblue}\footnotesize\parbox{3cm}{\centering(modulo renaming\\of variables)}};
+    \path<3->[arr] (vars.west) edge [bend right=40] (var1)
+    (vars.south) edge [bend left=10] (var2);
+    \path<2->[arr](bgs.west) edge [bend right=40] (bg1)
+    (bgs.south) edge [bend left=10] (bg2);
+  \end{tikzpicture}
+  \pause\pause
+  {\footnotesize
+    \hfill (+ rule for $\beta$-reduction in paper)}
+        
+\end{frame}
+
+\subsection{Completeness}
+\begin{frame}[label=outline]
+  
+  \tikzstyle{every picture}+=[remember picture]
+  
+  \vspace*{1.1cm}
+    \begin{figure}
+      \tikzcdset{every label/.append style = {font = \normalsize,outer
+          sep=4pt}}
+
+      \centering
+      
+      \vspace*{-8mm}
+        
+        % {\color{oxbrown}\large $\neg x\,M\lor\neg\phi\models\neg\phi$}
+
+        % \vspace{0.6cm}
+      
+      \begin{tikzcd}[row sep=2.5em,column sep=3.7em,minimum width=2em,nodes={anchor=center}, ampersand replacement=\&]
+        \tikz[baseline]{\node[box] (unsat) {\Large $\Set$ is $\As$-unsatisfiable};}
+        \arrow[Rightarrow,visible on=<3->]{d}{}
+        \arrow[Rightarrow,bend right=5,thick,dashed,visible on=<2-6>]{r}[below]{\textbf{completeness}}
+        \arrow[Rightarrow,bend right=5,thick,visible on=<7->]{r}[below]{\textbf{completeness}}\&
+        \tikz[baseline]{\node[box] (der)  {\Large $\bot$ is derivable
+            from $\Set$};}
+        \arrow[Rightarrow,bend right=5,thick]{l}[above]{\textbf{soundness}}\\
+        \text{\onslide<3->{\parbox{3.9cm}{\large
+              \textbf{\color{oxblue}1.} $\exists G\in\Set$ s.t.\\ 
+              \hspace*{2cm}$\As_\Set\not\models G$}}}
+        \arrow[Rightarrow,visible on=<5->]{d}{}\&
+    \text{\onslide<7->{\parbox{5cm}{\large \textbf{\color{oxblue}4.}
+          Sufficient to ``unfold'' at\\
+          \emph{leftmost} positions of atoms}}}
+        \arrow[Rightarrow,visible on=<7->]{u}{}\\
+        \text{\onslide<5->{\parbox{3.9cm}{\large
+              \textbf{\color{oxblue}2.} $\exists$
+              \emph{$n\in\omega$} s.t.\\
+              \hspace*{2cm}\tikz[baseline]{\node [e,inner sep=0pt] (cann)
+                {\emph{$\As_n\not\models G$}};}}}}
+        \arrow[Rightarrow,visible on=<6->]{r}{}\&
+        \text{\onslide<6->{\parbox{5cm}{\textbf{\large
+          \color{oxblue}3.} There is a \emph{syntactic} reason\\
+        for $\As_n\not\models G$\\
+        (by ``\emph{unfolding definitions}'')}}}
+  \arrow[Rightarrow,visible on=<7->]{u}{}\\
+  \tikz[baseline]{\onslide<4->{\node[box] (anncann)
+    {\large $T_\Set$ is \emph{quasi-continuous}};}}
+      \end{tikzcd}
+    \end{figure}
+
+    \begin{tikzpicture}[overlay]      
+      \node [above left=0.4cm of der] {\LARGE\cmark};
+
+      \node<5-> [above right=13mm and -15mm of anncann] (foo) {};
+
+
+      \path[->,arr]<5-> (anncann.north) edge[bend right=20] (foo);
+    \end{tikzpicture}
+    
+\end{frame}
+
+
+% \begin{frame}[t]
+%   \centering
+
+%   {\color{oxbrown}\large $\neg x\,M\lor\neg\phi\models\neg\phi$}
+
+
+%   \begin{tikzpicture}[ampersand replacement=\&]
+%     \matrix (m) [matrix of nodes,row sep=3em,column sep=5em,minimum width=2em,nodes={anchor=center}]
+%     {
+%       \node[box] (unsat) {\Large $S$ is $\As$-unsatisfiable}; \&
+%       \node[box] (der)  {\Large $\bot$ is derivable
+%         from $S$}; \\
+%       \node<3->[proof] (cont) [text width=3.9cm] {\large
+%         \textbf{\color{oxblue}1.} $S$ is
+%         $\As$-\emph{continuous}-unsatisfiable};\&
+%       \node<6->[proof] (left) [text width=5cm] {\large \textbf{\color{oxblue}4.}
+%         Sufficient to \textit{unfold} at \emph{leftmost} positions of
+%         atoms
+%       };\\
+%       \node<4->[proof] (cann) [text width=3.9cm] {\large
+%         \textbf{\color{oxblue}2.} ex. $G\in S$ and $n\in\omega$ s.t.\
+%         \emph{$\As_n^\Cf\not\models G$}};\&
+%       \node<5->[proof] (syntax) [text width=5cm] {\large
+%         \textbf{\color{oxblue}3.} Reason for $\As_n^\Cf\not\models G$ can be captured
+%         \emph{syntactically} by \emph{unfolding definitions}}; \\
+%     };
+
+%     \onslide<2->{\node (scheck) [above left=0.4cm of der] {\LARGE\cmark};}
+%     \node<4->[ann] (anncann) [below right=0.8cm and -1.2cm of cann, text width=4cm]
+%     {nth-stage of continuous
+%       \emph{canonical} \color{lighterblue}structure}; 
+
+%     \path[->,thick] (der) edge[above,double,bend right=5] node {\large soundness}  (unsat);
+%     \path[->,thick]<2-> (unsat) edge[below,double,bend right=5] node {\large
+%       completeness}  (der);
+
+%     \path[->]<3-> (unsat) edge[double] (cont);
+%     \path[->]<4-> (cont) edge[double] (cann);
+%     \path[->]<5-> (cann) edge[double] (syntax);
+%     \path[->]<6-> (syntax) edge[double] (left)
+%     (left) edge[double] (der);
+
+%     \path[->,arr]<4-> (anncann.west) edge[bend left=30] (cann.south);
+%   \end{tikzpicture}
+  
+% \end{frame}
+
+
+
+% \begin{frame}
+%   \frametitle{Outline of the Completeness Proof}
+%   {\large
+%     \begin{enumerate}
+%       \setlength\itemsep{1em}
+%     \item $S$ is $\As$-\emph{continuous}-unsatisfiable if $S$ is
+%       $\As$-unsatisfiable.
+%     \item Iteratively construct a continuous \emph{canonical model} $\As^\Cf_\omega$ of
+%       the definite clauses in $S$.
+%       {
+%         \setbeamertemplate{itemize subitem}[triangle]
+%         \setbeamercolor{itemize subitem}{fg=oxblue}
+%         \setbeamerfont{itemize/enumerate subbody}{size=\large}
+%         \begin{itemize}
+%         \item exists $G\in S$ and $n\in\omega$ s.t.\ $\As_n^\Cf\not\models
+%           G$
+%         \end{itemize}
+%       }
+%     \item Reason for $\As_n^\Cf\not\models G$ can be captured \emph{syntactically} by \emph{unfolding definitions}.
+%     \item Sufficient to \textit{unfold} at \emph{leftmost} positions of
+%       atoms
+%       {
+%         \setbeamertemplate{itemize subitem}[triangle]
+%         \setbeamercolor{itemize subitem}{fg=oxblue}
+%         \setbeamerfont{itemize/enumerate subbody}{size=\large}
+%         \begin{itemize}
+%         \item can be captured by the resolution proof system
+%         \end{itemize}
+%       }
+%     \end{enumerate}
+%   }
+% \end{frame}
+
+
+
+% \begin{frame}
+
+%   {\LARGE
+%     \begin{enumerate}
+%     \item \color{lighterblue} $\Set$ is $\As$-\emph{continuous}-unsatisfiable if $\Set$ is
+%       $\As$-unsatisfiable
+%     \end{enumerate}
+%   }
+% \end{frame}
+
+% \begin{frame}
+%   \frametitle{Continuous Semantics}
+%   \tikzstyle{every picture}+=[remember picture]
+
+%    \emph{continuous} interpretation $\Cf$ of types: 
+%   %\vspace*{-0.2cm}
+%   \begin{align*}
+%     \sinti\Cf\iota&\defeq\dom(\As)&\sinti\Cf o&\defeq\bool&\sinti\Cf{\tau\to\sigma}&\defeq
+%                                                                            \color{oxred2}\tikz[baseline]{
+%                                                                            \node[anchor=base] (cfunc2) {$[\sinti\Cf\tau\xrightarrow{c}\sinti\Cf\sigma]$};}
+%   \end{align*}
+% \hfill\tikz[baseline]\node[anchor=base] (cfunc1)
+% {\color{lighterblue}\emph{continuous} function space};
+% \begin{tikzpicture}[overlay]
+%     \path[arr] (cfunc1.north) edge (cfunc2);
+%   \end{tikzpicture}
+% \pause
+% \begin{definition}
+% A monotone $f\from \tikz[baseline]{
+%   \node[anchor=base] (con2) {$P$};} \to \tikz[baseline]{
+%   \node[anchor=base] (con3) {$Q$};}$ is \emph{continuous} if for all
+% \textit{directed}   $D\subseteq P$,
+% \begin{align*}
+%   f\left(\bigsqcup D\right)=\bigsqcup_{d\in D}f(d)
+% \end{align*}
+
+% \vspace{-0.7cm}\tikz[baseline]\node[anchor=base,ann] (con1)
+%   {directed-complete posets}; 
+% \end{definition}
+% \begin{tikzpicture}[overlay]
+%     \path[arr] (con1) edge [bend left] (con2)
+%     (con1) edge [bend left=15] (con3);
+%   \end{tikzpicture}\pause
+  
+%   Structures $\Bs$, valuations $\alpha$ and denotations $\sinti\Bs
+%   M(\alpha)$ still as usual \textit{\color{oxbrown!90!black}(but w.r.t.\
+%     $\sinti\Cf-$!)}
+% \end{frame}
+
+% \begin{frame}
+
+%   \tikzstyle{every picture}+=[remember picture]
+
+%   % \tikz[baseline]\node[anchor=base,ann] (constr1)
+%   % {continuous structure};
+%   % {\Large
+%   %   \begin{align*}
+%   %     \tikz[baseline]{\node[anchor=base] (constr2)
+%   %     {$I(\Bs)$};},\tikz[baseline]{\node[anchor=base] (stval2)
+%   %     {$\alpha$};}\not\models G\text{ implies }\tikz[baseline]{\node[anchor=base] (constr3)
+%   %     {$\Bs$};},L\circ \tikz[baseline]{\node[anchor=base] (stval3)
+%   %     {$\alpha$};}\not\models G
+%   %   \end{align*}
+%   % }
+% % \hfill\tikz[baseline]\node[anchor=base,ann] (stval1)
+% %   {standard valuation};
+
+%   % \begin{tikzpicture}[overlay]
+%   %   \draw [draw=lighterblue,decoration={brace, mirror,raise=0.5cm,
+%   %     amplitude=5pt}, decorate] (1.3,1.9) -- (2.4,1.9) 
+%   %   node [ann,pos=0.5,anchor=south,yshift=-1.3cm] {standard structure};
+
+%   %   \draw [draw=lighterblue,decoration={brace, raise=0.5cm,
+%   %     amplitude=5pt}, decorate] (7.0,1.8) -- (8.4,1.8) 
+%   %   node [ann,pos=0.5,anchor=north,yshift=1.3cm] {continuous valuation};
+  
+    
+%   %   \path[arr] (constr1.south) edge [bend right] (constr2.north)
+%   %   (constr1.east) edge [bend left=20] (constr3)
+%   %   (stval1.west) edge [bend left=20] (stval2)
+%   %   (stval1.north) edge [bend left=10] (stval3);
+%   % \end{tikzpicture}  \pause
+
+%   {\large
+%     \begin{theorem}
+%       If $\Set$ is $\As$-continuous-satisfiable then it is $\As$-satisfiable.
+%     \end{theorem}
+%   }\pause
+%   \textbf{Proof sketch.}
+%     Define adjunctions for each type $\sigma$:
+%     \vspace*{-2mm}
+%   {\large
+%     \begin{figure}
+%     \centering
+%     \begin{tikzcd}[ampersand replacement=\&]
+%       \sinti\Cf\sigma \arrow [shift left=1ex]{r}[name=C]{I_\sigma}
+%       \arrow[draw=none, shift left=-1ex]{r}{\top}\&
+%       \sinti\Sf\sigma\arrow[shift left=1ex]{l}[name=S]{L_\sigma}
+%     \end{tikzcd}      
+%     \end{figure}
+%   }
+%   \vspace*{-2mm}
+%   $\color{lighterblue}\underbrace{\color{black}I(\Bs),\alpha\not\models G}_{\color{lighterblue}\textstyle\text{standard}}$ implies $\color{lighterblue}\underbrace{\color{black}\Bs,L\circ\alpha\not\models G}_{\color{lighterblue}\textstyle\text{continuous}}$
+
+%   \vspace{-4mm}\qed
+  
+% \end{frame}
+
+% \begin{frame}
+
+%   \tikzstyle{every picture}+=[remember picture]
+%   {\LARGE
+%     \begin{enumerate}
+%     \item[2.] \color{lighterblue} $\exists G\in\Set$ and \emph{$n\in\omega$} s.t.\
+%       \emph{$\tikz[baseline]{\node[anchor=base] (cann)
+%       {$\As_n^\Cf$};}\not\models G$}
+%     \end{enumerate}
+%   }
+
+%   \vspace{0.7cm}
+%   \hfill\tikz\node[ann] (anncann) [text width=5cm]
+%   {\Large nth-stage of continuous
+%     \emph{canonical} \color{lighterblue}structure}; 
+
+%  \begin{tikzpicture}[overlay]
+%    \path[->,arr] (anncann) edge[bend left=30] (cann);
+%   \end{tikzpicture}
+  
+% \end{frame}
+
+
+% {\againframe<6>{outline}}
+
+\section{Semantic Invariance}
+\partframe{Semantic Invariance}
+
+
+\subsection{Semantic Invariance}
+\begin{frame}<1-2>[label=seminv]
+  \frametitle{Semantic Invariance}
+
+  \tikzstyle{every picture}+=[remember picture]
+  
+  \vspace*{15mm}
+    \begin{figure}
+      \tikzcdset{every label/.append style = {font = \normalsize,outer
+          sep=4pt}}
+      
+      \begin{tikzcd}[column sep=2em,row sep=3em, ampersand replacement=\&,overlay]
+        \tikz{\onslide<2->{\node[box] (mon)  {\Large $\As$-monotone-satisfiable};}}
+        \arrow[Leftrightarrow,thick,visible on=<2->]{d}{\text{[POPL'18]}}\&
+        \tikz[baseline]{\onslide<2->{\node[e]{$\sinti\Mf{\tau\to\sigma}\defeq[\sinti\Mf\tau$};}}
+        \hspace{-0.2cm}\tikz[baseline]{\onslide<2->{\node[frame]{$\xrightarrow{m}$};}}
+        \hspace{-0.2cm}\tikz[baseline]{\onslide<2->{\node[e]{$\sinti\Mf\sigma]$};}}\\
+        \tikz\node[box] (std) {\Large \textbf{$\As$-satisfiable}};
+        \arrow[Leftarrow,thick,visible
+        on=<4>]{d}{\parbox{2.2cm}{soundness +\\completeness}}
+        \arrow[Leftrightarrow,thick,visible on=<5->]{d}{\parbox{2.2cm}{soundness +\\completeness}}\&
+        \sinti\Sf{\tau\to\sigma}\defeq[\sinti\Sf\tau\xrightarrow{}\sinti\Sf\sigma]\\
+        \tikz{\onslide<3->{\node[box] (cont)  {\Large $(\As,\Hf)$-satisfiable};}}
+        %\arrow[Rightarrow,thick,shift left=1.3ex]{u}{\text{\large\cmark}}
+        \arrow[Rightarrow,thick,shift left=1.3ex,visible on=<7->]{d}{\text{\large\cmark}}\&
+        \tikz[baseline]{\onslide<3->{\node[e] (subset) {$\sinti\Hf{\tau\to\sigma}$};}}
+        \hspace{-0.2cm}\tikz[baseline]{\onslide<3->{\node[frame]{$\subseteq$};}}
+        \hspace{-0.2cm}\tikz[baseline]{\onslide<3->{\node[e]{$[\sinti\Hf\tau\xrightarrow{}\sinti\Hf\sigma]$};}}\\
+        \tikz{\onslide<6->{\node[box] (Henkin)  {\Large $\As$-Henkin-satisfiable};}}
+        \arrow[Rightarrow,thick,shift left=1.3ex,visible
+        on=<8->]{u}{\parbox{2.2cm}{soundness +\\completeness}}\&
+        \tikz[baseline]{\onslide<6->{\node[e]{$(\As,\Hf')$-satisfiable for \emph{some} $\Hf'$};}}
+      \end{tikzcd}
+    \end{figure}
+
+    \begin{tikzpicture}[overlay]
+      \node[e,right=-10mm of subset] (foo) {}; 
+      \node<5->[ann,below right=2mm and -4mm of subset] (closed) {closed under suprema};
+      \path[->,arr]<5-> (closed.west) edge[bend left=40] (foo.south);
+    \end{tikzpicture}
+    
+\end{frame}
+
+
+
+\begin{frame}
+
+  \color{black!80}
+  \tikzstyle{every picture}+=[remember picture]
+  \only<1-3>{
+     \tikzstyle{fr2}=[anchor=base,ellipse,inner sep=1pt]
+  }
+  \only<4->{
+    \tikzstyle{fr2}=[fill=oxpink,anchor=base,very
+    thick,dashed,ellipse,inner sep=1pt]
+  }
+
+  \vspace*{1.1cm}
+    \begin{figure}
+      \tikzcdset{every label/.append style = {font = \normalsize,outer
+          sep=4pt}}
+
+      \centering
+      
+      \vspace*{-4mm}
+        
+        % {\color{oxbrown}\large $\neg x\,M\lor\neg\phi\models\neg\phi$}
+
+        % \vspace{0.6cm}
+      
+      \begin{tikzcd}[row sep=2.5em,column sep=3.7em,minimum width=2em,nodes={anchor=center}, ampersand replacement=\&]
+        \tikz[baseline]{\node[greybox] (unsat) {\Large $\Set$ is $\As$-unsatisfiable};}
+        \arrow[Rightarrow,visible on=<3->]{d}{}
+        \arrow[Rightarrow,bend right=5,thick,visible on=<3->]{r}[below]{\textbf{completeness}}\&
+        \tikz[baseline]{\node[greybox] (der)  {\Large $\bot$ is derivable
+            from $\Set$};}
+        \arrow[Rightarrow,bend right=5,thick]{l}[above] {\textbf{soundness}}\\
+        \text{\onslide<3->{\parbox{3.9cm}{\large
+            \textbf{1.} $\exists G\in\Set$ s.t.\\ 
+            \hspace*{1.7cm}\tikz[baseline]{\node[fr2] (cann2) {$\As_\Set$};}$\not\models G$}}}
+        \arrow[Rightarrow,visible on=<3->]{d}{}\&
+    \text{\onslide<3->{\parbox{5cm}{\large \textbf{4.}
+          Sufficient to ``unfold'' at\\
+          leftmost positions of atoms}}}
+        \arrow[Rightarrow,visible on=<3->]{u}{}\\
+        \text{\onslide<3->{\parbox{3.9cm}{\large
+              \textbf{2.} $\exists$
+              $n\in\omega$ s.t.\\
+              \hspace*{1.7cm}
+              $\As_n\not\models G$}}}
+        \arrow[Rightarrow,visible on=<3->]{r}{}\&
+        \text{\onslide<3->{\parbox{5cm}{\textbf{\large
+          3.} There is a syntactic reason\\
+        for $\As_n\not\models G$\\
+        (by ``unfolding definitions'')}}}
+    \arrow[Rightarrow,visible on=<3->]{u}{}
+  \end{tikzcd}
+    \end{figure}
+
+    \begin{tikzpicture}[overlay]
+      %12,53
+      \node [rotate=-30,above right=12mm and -13mm of der,draw=black!75] {\Large\textbf{Recap}};
+
+      \onslide<4->{\node[below right=57mm and -5mm of unsat,highlight] (sup) {\parbox{30mm}{$\sinti\Sf\rho$ closed
+            under suprema}};}
+
+    \onslide<2->{\node [above left=13mm and 9mm of der,highlight] (exp) {\parbox{33mm}{denotation of terms as
+            ``expected''}};
+      \node [below=4mm of exp] (sound) {};}
+
+
+   \node [above right=31mm and -20mm of anncann] (bar) {};
+
+     \path[harr]<4-> (sup.north) edge[bend right=20] (bar);
+     \path[harr]<2-> (exp) edge[] (sound);
+
+
+    \end{tikzpicture}
+    
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Generalised HoCHC Satisfiability Problem}
+    \tikzstyle{every picture}+=[remember picture]
+
+    $\As$: fixed model of the background theory
+
+    $\Set$: set of HoCHCs
+
+    $\Hf$: fixed interpretation of types s.t.\pause
+    \hfill\tikz[baseline]\node[anchor=base] (sfunc1)
+    {\parbox{40mm}{\color{lighterblue}sufficiently rich to give ``expected'' denotations}}; 
+    % \vspace*{-0.2cm}
+    \begin{align*}
+      \sinti\Hf\iota&=\dom(\As)&\sinti\Hf
+                                 o&=\bool&\sinti\Hf{\tau\to\sigma}&
+                                                                    \tikz[baseline]{\node[frame]
+                                                                    (subset)
+                                                                    {$\subseteq$};}
+                                                                    \tikz[baseline]{
+                                                                    \node[anchor=base] (sfunc2) {$[\sinti\Hf\tau\to\sinti\Hf\sigma]$};}
+    \end{align*}
+
+    \begin{tikzpicture}[overlay]
+      \path[arr] (sfunc1.south) edge [bend left=10] (subset.north);
+    \end{tikzpicture}
+    \pause
+    \begin{block}{Satisfiability}
+      $\Set$ is \emph{$(\As,\Hf)$-satisfiable} if there exists a \emph{$(\Sigma',\Hf)$-structure} $\Bs$ s.t.\pause
+      \vspace{3pt}
+      \begin{enumerate}
+        \setlength\itemsep{5pt}
+      \item $\Bs$ agrees with $\As$ on $\Sigma$ (background theory),
+      \item $\Bs\models\Set$.
+      \end{enumerate}
+    \end{block}
+
+  \end{frame}
+
+  \againframe<3->{seminv}
+
+
+
+
+\section{Conclusion}
+\begin{frame}
+  \frametitle{Conclusion}
+
+
+  
+  \subheadline{This talk:}
+  \begin{itemize}
+  \item A \emph{simple} resolution proof system for HoCHC
+    \begin{itemize}
+    \item Completeness even for \emph{standard} semantics
+    \end{itemize}
+  \item Canonical model property and semantic invariance of HoCHC
+  \end{itemize}
+  \pause
+  \subheadline{Also in the paper:}
+  \begin{itemize}
+  \item Extension to \emph{compact} theories
+  \item 1st-order translation (complete for \emph{standard}
+    semantics)
+  \item \emph{Decidable} fragments
+  \end{itemize}
+  \pause
+  \subheadline{Future directions:}
+  \begin{itemize}
+  \item Implementation
+  \item Improve \textit{robustness} on satisfiable instances
+  \end{itemize}
+  \vspace{15pt}
+%   \vfill
+% {  \footnotesize\emph{Horus}
+%   (\url{http://mjolnir.cs.ox.ac.uk/horus/})\\[-3pt]
+%   \emph{DefMono} (\url{http://mjolnir.cs.ox.ac.uk/dfhochc/})}
+\end{frame}
+
+\setbeamertemplate{footline}{%
+ \includegraphics[align=c,height=7mm]{logo2.png}%
+  \hspace*{-3cm}
+  \usebeamercolor[bg]{footer}
+  \usebeamercolor[fg]{footer}
+  \hfill
+  \insertframenumber{}/\inserttotalframenumber\,
+}
+
+
+\begin{frame}
+  \frametitle{Conclusion}
+
+  \vspace*{1cm}
+  
+  \begin{columns}
+    \begin{column}{0.8\paperwidth}
+      \textit{\textbf{\Large\color{lighterblue} 
+    HoCHC lies at a \textbf{``sweet
+      spot''} in higher-order logic, \emph{semantically robust} and
+    \emph{useful} for \emph{algorithmic} verification.}}
+
+    \end{column}
+  \end{columns}
+
+    
+  {          \centering
+          % \includegraphics[align=c, height=7mm]{../logo2.png}%
+
+          \vspace*{15mm}
+          
+          \insertauthor
+          
+          \vspace*{3mm}
+          
+          \href{mailto: dominik.wagner@cs.ox.ac.uk}{\texttt{dominik.wagner@cs.ox.ac.uk}}
+        % \begin{mdframed}[backgroundcolor=lighterblue,fontcolor=white,
+      %     userdefinedwidth=\paperwidth,
+      %     innertopmargin=10pt,innerbottommargin=10pt,
+      %     innerleftmargin=2pt,innerrightmargin=2pt]
+      
+      %     \centering
+      %     \stepcounter{partc}
+      %     \Huge Part \Roman{partc}:
+
+      %     \textbf{#1}
+      %   \end{mdframed} 
+      % \
+        }
+        
+\end{frame}
+
+
+
+\appendix
+% \begin{frame}
+%         \frametitle{References}
+%         \bibliographystyle{apalike}
+%         \bibliography{lit}
+% \end{frame}
+
+\subsection{Example}
+\begin{frame}[noframenumbering]
+
+  \only<2-3>{\tikzstyle{res1}=[fill=oxpink,inner sep=3pt,anchor=base]}
+  \only<1,4->{\tikzstyle{res1}=[inner sep=3pt,anchor=base]}
+  \only<3>{\tikzstyle{add1}=[fill=oxgreen3,inner sep=3pt,anchor=base]}
+  \only<-2,4->{\tikzstyle{add1}=[inner sep=3pt,anchor=base]}
+
+  \only<3>{\tikzstyle{special1}=[fill=oxgreen3,inner sep=3pt,anchor=base]}
+  \only<4-5>{\tikzstyle{special1}=[fill=oxpink,inner sep=3pt,anchor=base]}
+  \only<-2,6->{\tikzstyle{special1}=[inner sep=3pt,anchor=base]}
+  
+  
+  \only<4-5>{\tikzstyle{res2}=[fill=oxpink,inner sep=3pt,anchor=base]}
+  \only<-3,6->{\tikzstyle{res2}=[inner sep=3pt,anchor=base]}
+  \only<5>{\tikzstyle{add2}=[fill=oxgreen3,inner sep=3pt,anchor=base]}
+  \only<-4,6->{\tikzstyle{add2}=[inner sep=3pt,anchor=base]}
+
+  \only<6-7>{\tikzstyle{res3}=[fill=oxpink,inner sep=3pt,anchor=base]}
+  \only<-5,8->{\tikzstyle{res3}=[inner sep=3pt,anchor=base]}
+  \only<7>{\tikzstyle{add3}=[fill=oxgreen3,inner sep=3pt,anchor=base]}
+  \only<-6,8->{\tikzstyle{add3}=[inner sep=3pt,anchor=base]}
+
+
+  \only<7>{\tikzstyle{special3}=[fill=oxgreen3,inner sep=3pt,anchor=base]}
+  \only<8-9>{\tikzstyle{special3}=[pattern=crosshatch,pattern color=oxpink,inner sep=3pt,anchor=base]}
+  \only<-6>{\tikzstyle{special3}=[inner sep=3pt,anchor=base]}
+  
+  \only<8-9>{\tikzstyle{res4}=[pattern=crosshatch,pattern color=oxpink, inner sep=3pt,anchor=base]}
+  \only<-7>{\tikzstyle{res4}=[inner sep=3pt,anchor=base]}
+  \only<9>{\tikzstyle{add4}=[fill=oxgreen3,inner sep=3pt,anchor=base]}
+  \only<-8>{\tikzstyle{add4}=[inner sep=3pt,anchor=base]}
+
+  
+  \vspace*{0.4cm}
+  \begin{mdframed}[backgroundcolor=lightblue,linecolor=oxblue,linewidth=1pt]
+    \vspace*{-0.5cm}
+    \small
+    \begin{align*}
+      \tikz[baseline]{\node[add2] {$\neg(z=x+y)$};}\lor
+      \tikz[baseline]{\node[res2] {$\Add\,x\,y\,z$};}&=:D_1\\[-7pt]
+      \tikz[baseline]{\node[add3] {$\neg(n\leq 0)$};}\lor
+      \tikz[baseline]{\node[add3] {$\neg (s=x)$};} \lor
+      \tikz[baseline]{\node[res3] {$\Iter\,f\,s\,n\,x$};}&=:D_2\\[-7pt]
+      \tikz[baseline]{\node[add1] {$\neg(n>0)$};}\lor
+      \tikz[baseline]{\node[add1] {$\neg \Iter\,f\,s\,(n-1)\,y$};}\lor
+      \tikz[baseline]{\node[add1] {$\neg(f\,n\,y\,x)$};} \lor
+      \tikz[baseline]{\node[res1] {$\Iter\,f\,s\,n\,x$};}&=:D_3
+    \end{align*} 
+  \end{mdframed}
+  \vspace*{0.3cm}
+  
+  \begin{prooftree}
+    \AxiomC{$\neg(n\geq 1)\lor\tikz[baseline]{\node[res1] {$\neg\Iter\,\Add\,n\,n\,x$};}\lor\neg(x\leq
+      n+n)$}
+    \AxiomC{\onslide<3->{\hspace*{-0.2cm}$D_3$}}
+    \LeftLabel{\onslide<3->{\color{oxblue}Res.}}
+    \only<-2>{\noLine}
+    \BinaryInfC{\onslide<3->{\parbox{7.7cm}{
+        \raggedleft $\neg(n\geq 1)\lor
+        \tikz[baseline]{\node[add1] {$\neg(n>0)$};}\lor
+        \tikz[baseline]{\node[add1] {$\neg\Iter\,\Add\,n\,(n-1)\,y$};}\lor$\\
+        $\tikz[baseline]{\node[special1] {$\neg \Add\,n\,y\,x$};}\lor\neg(x\leq n+n)$
+      }}}
+    \AxiomC{\onslide<5->{\hspace*{-0.2cm}$D_1$}}
+    \LeftLabel{\onslide<5->{\color{oxblue}Res.}}
+     \only<-4>{\noLine}
+     \BinaryInfC{\onslide<5->{\parbox{7.5cm}{\raggedleft $\neg(n\geq
+        1)\lor\neg(n>0)\lor
+        \tikz[baseline]{\node[res3] {$\neg\Iter\,\Add\,n\,(n-1)\,y$};}\lor$\\
+        $\tikz[baseline]{\node[add2] {$\neg (x=n+y)$};}
+        \lor\neg(x\leq n+n)$}}}
+    \AxiomC{\onslide<7->{\hspace*{-0.2cm}$D_2$}}
+    \LeftLabel{\onslide<7->{\color{oxblue}Res.}}
+    \only<-6>{\noLine}
+    \BinaryInfC{\onslide<7->{\parbox{7.0cm}{\raggedleft
+          $\tikz[baseline]{\node[res4] {$\neg(n\geq 1)$};}\lor
+          \tikz[baseline]{\node[res4] {$\neg(n>0)$};}\lor
+          \tikz[baseline]{\node[special3] {$\neg (n-1\leq 0)$};}\lor$\\
+          $\tikz[baseline]{\node[special3] {$\neg(n=y)$};}\lor
+          \tikz[baseline]{\node[res4] {$\neg(x=n+y)$};}\lor
+          \tikz[baseline]{\node[res4] {$\neg(x\leq n+n)$};}$}}}
+    \LeftLabel{\onslide<9->{\color{oxblue}Const.\ Ref.}}
+    \only<-8>{\noLine}
+    \UnaryInfC{\onslide<9->{\tikz[baseline]{\node[add4] {$\bot$};}}}   
+  \end{prooftree}
+  \onslide<8->{
+    \begin{align*}
+      \alpha(n)&=1&\alpha(x)&=2&\alpha(y)&=1
+    \end{align*}
+}
+\end{frame}
+
+
+\end{document}
+
