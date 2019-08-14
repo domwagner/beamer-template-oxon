@@ -44,29 +44,7 @@
 \usepackage{multirow}
 \usepackage{tikz-cd}
 
-\newcommand{\subheadline}[1]{\bigskip\textbf{\large\color{oxlighterblue}#1}}
 
-\newcounter{partc}
-
-\newcommand{\partframe}[1]{
-  \begin{frame}[plain]
-    \begin{columns}
-      \begin{column}{\paperwidth}
-        \begin{mdframed}[backgroundcolor=oxlighterblue,fontcolor=white,
-          userdefinedwidth=\paperwidth,
-          innertopmargin=10pt,innerbottommargin=10pt,
-          innerleftmargin=2pt,innerrightmargin=2pt]
-
-          \centering
-          \stepcounter{partc}
-          \Huge Part \Roman{partc}:
-
-          \textbf{#1}
-        \end{mdframed} 
-      \end{column}
-    \end{columns}
-  \end{frame}
-}
 
 \tikzstyle{arr}=[->,color=oxlighterblue]
 \tikzstyle{ann}=[text=oxlighterblue,anchor=base]

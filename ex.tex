@@ -118,80 +118,48 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
       \hspace*{-6mm}
       \renewcommand\arraystretch{1.5}
       \begin{tabular}{l|cccc}
-        &\multirow{2}{*}{1st-order logic}
-          &
-                    \multicolumn{2}{c}{
-                    \tikz[baseline]{
-                    \node[strthr] (hol)
-                    {higher-order logic};}}
-        \\\cline{3-4}
-        &&\tikz[baseline]{\node[anchor=base ,inner sep=0pt](std){standard};}
-                     &
-                       \tikz[baseline]{
-                           \node[anchor=base,inner sep=0pt] (Henkin) {Henkin};
-                       }
-        \\\hline
-        complete proof systems&\cmark&
-                                       \tikz[baseline]{
-                                       \node[fail] (proof)
-                                       {\xmark};}&\cmark\\
-        semi-decidable&\cmark&
-                               \tikz[baseline]{
-                                       \node[fail] (semi)
-                                       {\xmark};}&\cmark\\
-        1st-order translation&--&
-                                       \tikz[baseline]{
-                                       \node[fail] (fol)
-                                       {\xmark};}&\cmark\\
-        intuitive &\cmark&\cmark&\xmark
+        &ullamco laboris&\tikz[baseline]{\node[strthr] (hol){aliquip};}&sint\\\hline
+        exercitation ullamco&\cmark&\tikz[baseline]{\node[fail] (proof){\xmark};}&\cmark\\
+        reprehenderit &\cmark&\tikz[baseline]{\node[fail] (semi){\xmark};}&\cmark\\
+        incididunt ut&--&\tikz[baseline]{\node[fail] (fol){\xmark};}&\cmark\\
+        pariatur &\cmark&\cmark&\xmark
       \end{tabular}
     \end{table}
 
     \begin{tikzpicture}[overlay]
-        \node[anchor=base,above=0cm of hol]
-        {\emph{\Large\textbf{HoCHC}}};
-        \node[anchor=base,right=-0.1cm of proof]
-        {\cmark};
-        \node[anchor=base,right=-0.1cm of semi]
-        {\cmark};
-        \node[anchor=base,right=-0.1cm of fol]
-        {\cmark};
-        \node[anchor=base,right=-1.2mm of std]
-        {\emph{$\Leftrightarrow$}};
+      \node[anchor=base,above=0cm of hol]{\emph{\Large\textbf{proident}}};
+      \node[anchor=base,right=-0.1cm of proof]{\cmark};
+      \node[anchor=base,right=-0.1cm of semi]{\cmark};
+      \node[anchor=base,right=-0.1cm of fol]{\cmark};
     \end{tikzpicture}
-    
   }
-
 \end{frame}
 
 \begin{frame}
   \frametitle{Contributions}
   \begin{itemize}
-  \item A \emph{simple} resolution proof system for HoCHC
+  \item Quis \emph{autem} vel eum iure reprehenderit 
     \begin{itemize}
-    \item Completeness even for \emph{standard} semantics
-    \item HoCHC is \emph{semi-decidable} and compact
-    \end{itemize}
-  \item Semantic invariance
-  \item Canonical model property
-  \item 1-st order translation (complete for \emph{standard}
-    semantics)
-  \item \emph{Decidable} fragments
+    \item in ea \emph{voluptate} velit 
+    \item esse quam nihil molestiae consequatur
+  \end{itemize}
+  \item vel illum qui \emph{dolorem}
+  \item eum fugiat quo voluptas nulla pariatur 
+  \item omnis iste natus
   \end{itemize}
 
-  \subheadline{This talk:}
+  \paragraph{This talk:}
   \begin{itemize}
-  \item Canonical model property 
-  \item Resolution proof system and its completeness
-  \item Semantic invariance
+  \item iure reprehenderit
+  \item vel illum qui dolorem quo voluptas nulla pariatur 
+  \item omnis iste natus
   \end{itemize}
 \end{frame}
 
-\section{HoCHC}
-\partframe{HoCHC}
+\sectionf{Finibus}
 
 \begin{frame}
-  \frametitle{Syntactic Features}
+  \frametitle{Bonorum et Malorum}
   \tikzstyle{every picture}+=[remember picture]
 
   \tikzstyle{bg}=[fill=oxgold!25,anchor=base,inner sep=2pt,very
@@ -259,31 +227,27 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
 
 
 \begin{frame}
-  \frametitle{HoCHC Satisfiability Problem}
-  ${\mathcal A}$: fixed model (over $\Sigma$) of the background theory
-
-  $\Gamma$: set of HoCHCs
-
-  \vspace{3mm}
+  \frametitle{Ut Enim ad Minima}
   
-  {\large\begin{block}{Satisfiability}
-      $\Gamma$ is \emph{${\mathcal A}$-satisfiable} if there exists a $\Sigma'$-structure ${\mathcal B}$ s.t.
+  {\large\begin{block}{Enim}
+      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium beatae vitae dicta sunt explicabo.
       \vspace{3pt}
       \begin{enumerate}
         \setlength\itemsep{5pt}
-      \item ${\mathcal B}$ agrees with ${\mathcal A}$ on $\Sigma$ (background theory),
-      \item \emph{${\mathcal B},\alpha\models C$} for each $C\in\Gamma$ and valuation $\alpha$.
+      \item totam rem aperiam
+      \item eaque ipsa quae ab illo inventore \emph{veritatis} et quasi architecto.
       \end{enumerate}
     \end{block}
+
+    \begin{theorem}
+      Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.
+    \end{theorem}
   }
 \end{frame}
 
+\sectionf{Sed Quia Consequuntur}
 
-\section{Resolution Proof System}
-\partframe{Resolution Proof System}
-
-
-\subsection{Completeness}
+\subsection{Dolores}
 \begin{frame}[label=outline]
   
   \tikzstyle{every picture}+=[remember picture]
@@ -343,25 +307,21 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
 \section{Conclusion}
 \begin{frame}
   \frametitle{Conclusion}
-  \subheadline{This talk:}
+  \paragraph{This talk:}
   \begin{itemize}
-  \item A \emph{simple} resolution proof system for HoCHC
-    \begin{itemize}
-    \item Completeness even for \emph{standard} semantics
-    \end{itemize}
-  \item Canonical model property and semantic invariance of HoCHC
+  \item \emph{iure} reprehenderit
+  \item vel illum qui \emph{dolorem} quo voluptas nulla pariatur 
+  \item omnis iste natus
   \end{itemize}
-  \subheadline{Also in the paper:}
+  \paragraph{Also in the paper:}
   \begin{itemize}
-  \item Extension to \emph{compact} theories
-  \item 1st-order translation (complete for \emph{standard}
-    semantics)
-  \item \emph{Decidable} fragments
+  \item sit amet \emph{consectetur} adipisci velit
+  \item sed quia non numquam
   \end{itemize}
-  \subheadline{Future directions:}
+  \paragraph{Future directions:}
   \begin{itemize}
-  \item Implementation
-  \item Improve \textit{robustness} on satisfiable instances
+  \item consequuntur magni dolores
+  \item eos qui \emph{ratione} voluptatem sequi
   \end{itemize}
   \vspace{15pt}
 \end{frame}
@@ -384,9 +344,7 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
   \begin{columns}
     \begin{column}{0.8\paperwidth}
       \textit{\textbf{\Large\color{oxlighterblue} 
-    HoCHC lies at a \textbf{``sweet
-      spot''} in higher-order logic, \emph{semantically robust} and
-    \emph{useful} for \emph{algorithmic} verification.}}
+          Neque porro ``quisquam'' est, qui dolorem ipsum quia \emph{dolor sit amet}, consectetur, adipisci velit}}
 
     \end{column}
   \end{columns}
@@ -400,7 +358,7 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
           
           \vspace*{3mm}
           
-          \href{mailto:dominik.wagner@cs.ox.ac.uk}{\texttt{dominik.wagner@cs.ox.ac.uk}}
+          \href{mailto:cicero@cs.ox.ac.uk}{\texttt{cicero@cs.ox.ac.uk}}
           
         }
         

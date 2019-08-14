@@ -24,6 +24,31 @@
 \setbeamerfont{title}{series=\bfseries,parent=structure}
 \setbeamerfont{frametitle}{series=\bfseries,parent=structure,size=\LARGE}
 
+\newcounter{partc}
+
+\newcommand{\sectionf}[1]{
+  \section{#1}
+  \begin{frame}[plain]
+    \begin{columns}
+      \begin{column}{\paperwidth}
+        \begin{mdframed}[backgroundcolor=oxlighterblue,fontcolor=white,
+          userdefinedwidth=\paperwidth,
+          innertopmargin=10pt,innerbottommargin=10pt,
+          innerleftmargin=2pt,innerrightmargin=2pt]
+
+          \centering
+          \stepcounter{partc}
+          \Huge Part \Roman{partc}:
+
+          \textbf{#1}
+        \end{mdframed} 
+      \end{column}
+    \end{columns}
+  \end{frame}
+}
+
+\newcommand{\paragraph}[1]{\bigskip\textbf{\large\color{oxlighterblue}#1}}
+
 \renewcommand{\emph}[1]{{\color{oxred}\textit{#1}}}
 \newcommand{\emphmath}[1]{{\color{oxred}#1}}
 
