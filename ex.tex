@@ -1,18 +1,12 @@
 \documentclass{beamer}
 
 \include{header}
-\include{headerbeamer}
-
 
 \begin{document}
 
-\title[HoCHC]{
-  \textbf{HoCHC: A Refutationally Complete and\\
-    Semantically Invariant System of\\
-    Higher-order Logic Modulo Theories}
-}
-\author{Luke Ong\and\textbf{ \underline{Dominik Wagner}}}
-\date[LICS 2019]{LICS 2019}
+\title{De Finibus Bonorum et Malorum}
+\author{\textbf{\underline{Cicero}}\and Harris Rackham}
+\date{45 BC}
 
 \frame{\titlepage}
 
@@ -22,34 +16,34 @@
   \hspace{-0.8cm}\tikz{
     \draw [thick, decoration={brace, mirror,raise=0.5cm,
       amplitude=8pt}, decorate] (0,0) -- (2,0) 
-    node [pos=0.5,anchor=north,yshift=0.15cm] {\Large\emph{1st-order}};
+    node [pos=0.5,anchor=north,yshift=0.15cm] {\Large\emph{Neque por}};
   }
     
   \textit{\LARGE\color{oxlighterblue}
-    ``Constrained Horn Clauses provide a \emph{suitable} basis for automatic program verification''
+    ``ro quisquam est, qui dolorem ipsum quia dolor sit amet adipisci velit, sed''
   }
 
-    \hspace{3.4cm}\tikz[baseline]{
+    \hspace{2.1cm}\tikz[baseline]{
       \draw [thick, decoration={brace,raise=0.5cm,
         amplitude=8pt}, decorate] (0,-0.5) -- (2,-0.5) 
-      node [pos=0.5,anchor=north,yshift=0.6cm] {\Large\emph{imperative}};
-    }\hfill [Bj{\o}rner et al., 2015]
+      node [pos=0.5,anchor=north,yshift=0.6cm] {\Large\emph{consectetur}};
+    }\hfill [Cicero, 45 BC]
 
   \setbeamertemplate{itemize item}[triangle]
   \setbeamercolor{itemize item}{fg=oxblue}
   \vspace{1cm}
   {
     \begin{itemize}
-    \item separation of concerns
-    \item good \emph{algorithmic} properties: semi-decidable, highly efficient solvers
+    \item Sed ut perspiciatis unde omnis iste natus error sit \emph{voluptatem} accusantium doloremque laudantium
+    \item totam rem aperiam
     \end{itemize}
   }
   
   \vspace{0.5cm}
-  {[Cathcart Burn, Ong \& Ramsay; POPL'18]:
+  {[Rackham, 1914]:
 
     {\large
-    \textbf{\textit{\color{oxlighterblue}extend approach to \emph{higher-orders}}}}
+    \textbf{\textit{\color{oxlighterblue}No one rejects, dislikes, or avoids pleasure itself, because it is \emph{pleasure}}}}
   }
 
 \end{frame}
@@ -77,7 +71,7 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
       \coordinate (a) at (0,1);
       \draw[->, >=latex, oxblue, line width=5pt]   (a) to node[white]{} (b) ;
     \end{tikzpicture} &
-    (over-)approximate graph of functions
+     laboriosam, nisi ut aliquid
     &\begin{tikzpicture}
       \coordinate (b) at (0,0);
       \coordinate (a) at (0,1);
@@ -103,7 +97,7 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
   
   {\LARGE
     \color{oxlighterblue}
-    \textit{Is higher-order (Horn) logic modulo theories a sensible \emph{algorithmic} approach to verification?}
+    \textit{Ut enim ad minima \emph{veniam}, quis nostrum exercitationem ullam corporis suscipit!}
   
 }
   
@@ -344,83 +338,6 @@ in  (*$\lambda$*)x. assert (x >= 1 ->
     \end{tikzpicture}
     
 \end{frame}
-
-
-
-\section{Semantic Invariance}
-\partframe{Semantic Invariance}
-
-
-
-\begin{frame}
-
-  \color{black!80}
-  \tikzstyle{every picture}+=[remember picture]
-    \tikzstyle{fr2}=[fill=oxpink,anchor=base,very
-    thick,dashed,ellipse,inner sep=1pt]
-
-  \vspace*{1.1cm}
-    \begin{figure}
-      \tikzcdset{every label/.append style = {font = \normalsize,outer
-          sep=4pt}}
-
-      \centering
-      
-      \vspace*{-4mm}
-        
-        % {\color{oxbrown}\large $\neg x\,M\lor\neg\phi\models\neg\phi$}
-
-        % \vspace{0.6cm}
-      
-      \begin{tikzcd}[row sep=2.5em,column sep=3.7em,minimum width=2em,nodes={anchor=center}, ampersand replacement=\&]
-        \tikz[baseline]{\node[greybox] (unsat) {\Large $\Gamma$ is ${\mathcal A}$-unsatisfiable};}
-        \arrow[Rightarrow]{d}{}
-        \arrow[Rightarrow,bend right=5,thick]{r}[below]{\textbf{completeness}}\&
-        \tikz[baseline]{\node[greybox] (der)  {\Large $\bot$ is derivable
-            from $\Gamma$};}
-        \arrow[Rightarrow,bend right=5,thick]{l}[above] {\textbf{soundness}}\\
-        \text{\parbox{3.9cm}{\large
-            \textbf{1.} $\exists G\in\Gamma$ s.t.\\ 
-            \hspace*{1.7cm}\tikz[baseline]{\node[fr2] (cann2) {${\mathcal A}_\Gamma$};}$\not\models G$}}
-        \arrow[Rightarrow]{d}{}\&
-    \text{\parbox{5cm}{\large \textbf{4.}
-          Sufficient to ``unfold'' at\\
-          leftmost positions of atoms}}
-        \arrow[Rightarrow]{u}{}\\
-        \text{\parbox{3.9cm}{\large
-              \textbf{2.} $\exists$
-              $n\in\omega$ s.t.\\
-              \hspace*{1.7cm}
-              ${\mathcal A}_n\not\models G$}}
-        \arrow[Rightarrow]{r}{}\&
-        \text{\parbox{5cm}{\textbf{\large
-          3.} There is a syntactic reason\\
-        for ${\mathcal A}_n\not\models G$\\
-        (by ``unfolding definitions'')}}
-    \arrow[Rightarrow]{u}{}
-  \end{tikzcd}
-    \end{figure}
-
-    \begin{tikzpicture}[overlay]
-      %12,53
-      \node [rotate=-30,above right=12mm and -13mm of der,draw=black!75] {\Large\textbf{Recap}};
-
-      \node[below right=57mm and -5mm of unsat,highlight] (sup) {\parbox{30mm}{$\sinti{\mathcal S}\rho$ closed
-            under suprema}};
-
-    \node [above left=13mm and 9mm of der,highlight] (exp) {\parbox{33mm}{denotation of terms as
-            ``expected''}};
-      \node [below=4mm of exp] (sound) {};
-
-
-   \node [above right=31mm and -20mm of anncann] (bar) {};
-
-     \path[harr] (sup.north) edge[bend right=20] (bar);
-     \path[harr] (exp) edge[] (sound);
-
-
-    \end{tikzpicture}
-  \end{frame}
 
 
 \section{Conclusion}
